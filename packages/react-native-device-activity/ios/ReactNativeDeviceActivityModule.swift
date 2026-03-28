@@ -450,15 +450,22 @@ public class ReactNativeDeviceActivityModule: Module {
           : nil
       )
 
-      let decodedFamilyActivitySelections = familyActivitySelections.map {
-        familyActivitySelection in
-        let decoder = JSONDecoder()
-        let data = Data(base64Encoded: familyActivitySelection)
-        do {
-          let activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
-          return activitySelection
-        } catch {
+      let decodedFamilyActivitySelections = familyActivitySelections.compactMap {
+        familyActivitySelection -> FamilyActivitySelection? in
+        guard !familyActivitySelection.isEmpty else {
+          // Empty string is intentional for all_apps monitoring
           return FamilyActivitySelection()
+        }
+        let decoder = JSONDecoder()
+        guard let data = Data(base64Encoded: familyActivitySelection) else {
+          logger.error("Invalid base64 for FamilyActivitySelection — skipping category")
+          return nil
+        }
+        do {
+          return try decoder.decode(FamilyActivitySelection.self, from: data)
+        } catch {
+          logger.error("Failed to decode FamilyActivitySelection: \(error.localizedDescription, privacy: .public) — skipping category")
+          return nil
         }
       }
 

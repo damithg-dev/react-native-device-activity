@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
 import DeviceActivitySelectionViewPersisted from "./DeviceActivitySelectionViewPersisted";
+import { DeviceActivityReportView } from "./DeviceActivityReportView";
 import {
   Action,
   ActivitySelectionInput,
@@ -649,7 +650,7 @@ export function isAvailable(): boolean {
   );
 }
 
-export { DeviceActivitySelectionView, DeviceActivitySelectionViewPersisted };
+export { DeviceActivitySelectionView, DeviceActivitySelectionViewPersisted, DeviceActivityReportView };
 
 export type {
   DeviceActivitySelectionViewProps as ReactNativeDeviceActivityViewProps,
@@ -657,3 +658,8 @@ export type {
 };
 
 export * from "./ReactNativeDeviceActivity.types";
+export type {
+  DeviceActivityReportViewProps,
+  DeviceActivityReportFilter,
+  DeviceActivityReportUsers,
+} from "./DeviceActivityReportView.ios";

@@ -2,7 +2,7 @@ const getAppGroupFromExpoConfig = require("./getAppGroupFromExpoConfig");
 
 /**
  * Creates a configuration function for Apple target extensions
- * @param {('shield-action' | 'shield-configuration' | 'device-activity-monitor')} targetType - The type of target extension
+ * @param {('shield-action' | 'shield-configuration' | 'device-activity-monitor' | 'device-activity-report')} targetType - The type of target extension
  * @returns {import('@kingstinct/expo-apple-targets/build/config-plugin').ConfigFunction}
  */
 const createConfig = (targetType) => {
