@@ -1,7 +1,7 @@
 import ExpoModulesCore
 import os
 
-private let logger = Logger(subsystem: "ReactNativeDeviceActivity", category: "ReportModule")
+private let reportModuleLogger = Logger(subsystem: "ReactNativeDeviceActivity", category: "ReportModule")
 
 /// Expo module that registers the DeviceActivityReportBridgeView as a native view
 /// accessible from React Native via requireNativeViewManager.
@@ -11,27 +11,27 @@ public class DeviceActivityReportModule: Module {
     Name("DeviceActivityReportModule")
 
     OnCreate {
-      logger.info("DeviceActivityReportModule created")
+      reportModuleLogger.info("DeviceActivityReportModule created")
     }
 
     View(DeviceActivityReportBridgeView.self) {
       Prop("context") { (view: DeviceActivityReportBridgeView, prop: String) in
-        logger.debug("Prop set: context=\(prop, privacy: .public)")
+        reportModuleLogger.debug("Prop set: context=\(prop, privacy: .public)")
         view.reportContext = prop
       }
 
       Prop("filterUsers") { (view: DeviceActivityReportBridgeView, prop: String) in
-        logger.debug("Prop set: filterUsers=\(prop, privacy: .public)")
+        reportModuleLogger.debug("Prop set: filterUsers=\(prop, privacy: .public)")
         view.filterUsers = prop
       }
 
       Prop("filterDateStart") { (view: DeviceActivityReportBridgeView, prop: Double?) in
-        logger.debug("Prop set: filterDateStart=\(prop ?? 0, privacy: .public)")
+        reportModuleLogger.debug("Prop set: filterDateStart=\(prop ?? 0, privacy: .public)")
         view.filterDateStart = prop
       }
 
       Prop("filterDateEnd") { (view: DeviceActivityReportBridgeView, prop: Double?) in
-        logger.debug("Prop set: filterDateEnd=\(prop ?? 0, privacy: .public)")
+        reportModuleLogger.debug("Prop set: filterDateEnd=\(prop ?? 0, privacy: .public)")
         view.filterDateEnd = prop
       }
     }
