@@ -30,6 +30,7 @@ class DeviceActivityReportBridgeView: ExpoView {
     super.init(appContext: appContext)
     clipsToBounds = true
     backgroundColor = .clear
+    logger.debug("DeviceActivityReportBridgeView initialized")
   }
 
   private func scheduleRebuild() {
@@ -51,6 +52,7 @@ class DeviceActivityReportBridgeView: ExpoView {
   private func rebuildView() {
     // Clean up old hosting controller with proper containment
     if let hc = hostingController {
+      logger.debug("Cleaning up previous report hosting controller")
       hc.willMove(toParent: nil)
       hc.view.removeFromSuperview()
       hc.removeFromParent()
@@ -77,7 +79,7 @@ class DeviceActivityReportBridgeView: ExpoView {
       users: users
     )
 
-    logger.info("Building report: context=\(self.reportContext), users=\(self.filterUsers)")
+    logger.info("Building report: context=\(self.reportContext, privacy: .public), users=\(self.filterUsers, privacy: .public), dateInterval=\(dateInterval.start, privacy: .public)...\(dateInterval.end, privacy: .public)")
 
     let reportView = DeviceActivityReport(context, filter: filter)
     let hc = UIHostingController(rootView: AnyView(reportView))
@@ -88,11 +90,14 @@ class DeviceActivityReportBridgeView: ExpoView {
       parentVC.addChild(hc)
       addSubview(hc.view)
       hc.didMove(toParent: parentVC)
+      logger.debug("Report view attached to parent VC: \(String(describing: type(of: parentVC)), privacy: .public)")
     } else {
       addSubview(hc.view)
+      logger.warning("No parent VC found — report view added without containment")
     }
 
     hostingController = hc
+    logger.info("Report view built successfully")
   }
 
   /// Walk the responder chain to find the nearest UIViewController

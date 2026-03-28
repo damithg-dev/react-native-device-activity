@@ -61,13 +61,19 @@ export function DeviceActivityReportView({
   style,
 }: DeviceActivityReportViewProps) {
   if (Platform.OS !== "ios" || parseInt(Platform.Version as string, 10) < 16) {
+    console.log("[DeviceActivityReportView] Skipped: unsupported platform");
     return null;
   }
+
+  const users = filter?.users ?? "all";
+  console.log(
+    `[DeviceActivityReportView] Rendering: context=${context}, users=${users}`,
+  );
 
   return (
     <NativeReportView
       context={context}
-      filterUsers={filter?.users ?? "all"}
+      filterUsers={users}
       filterDateStart={filter?.dateInterval?.start}
       filterDateEnd={filter?.dateInterval?.end}
       style={style}

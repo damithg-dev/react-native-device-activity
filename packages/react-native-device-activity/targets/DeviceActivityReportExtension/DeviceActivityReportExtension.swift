@@ -30,23 +30,37 @@ struct TotalActivityReport: DeviceActivityReportScene {
   func makeConfiguration(
     representing data: DeviceActivityResults<DeviceActivityData>
   ) async -> ActivityReport {
+    logger.info("makeConfiguration called — processing DeviceActivityResults")
+
     var totalDuration: TimeInterval = 0
     var categoryDurations: [String: TimeInterval] = [:]
     var topApps: [(name: String, duration: TimeInterval)] = []
+    var segmentCount = 0
+    var appCount = 0
 
     for await activityData in data {
+      logger.debug("Processing activityData entry")
       for await segment in activityData.activitySegments {
+        segmentCount += 1
         totalDuration += segment.totalActivityDuration
+        logger.debug("Segment \(segmentCount): duration=\(segment.totalActivityDuration, privacy: .public)s")
 
         for await category in segment.categories {
           let categoryName = category.category.localizedDisplayName ?? "Other"
           categoryDurations[categoryName, default: 0] += category.totalActivityDuration
+          logger.debug("  Category: \(categoryName, privacy: .public) = \(category.totalActivityDuration, privacy: .public)s")
 
           for await app in category.applications {
+            appCount += 1
             let appName = app.application.localizedDisplayName ?? "Unknown"
             let duration = app.totalActivityDuration
             if duration > 0 {
               topApps.append((name: appName, duration: duration))
+            }
+            // Cap at 10 apps to avoid memory pressure
+            if appCount >= 10 {
+              logger.debug("  Reached 10 app limit, stopping app enumeration for this category")
+              break
             }
           }
         }
@@ -56,6 +70,8 @@ struct TotalActivityReport: DeviceActivityReportScene {
     // Sort and take top 10 apps
     topApps.sort { $0.duration > $1.duration }
     let limitedApps = Array(topApps.prefix(10))
+
+    logger.info("Report complete: total=\(Int(totalDuration), privacy: .public)s, categories=\(categoryDurations.count, privacy: .public), apps=\(limitedApps.count, privacy: .public), segments=\(segmentCount, privacy: .public)")
 
     return ActivityReport(
       totalDuration: totalDuration,
