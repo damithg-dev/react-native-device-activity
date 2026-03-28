@@ -7,7 +7,7 @@ private let reportBridgeLogger = Logger(subsystem: "ReactNativeDeviceActivity", 
 
 /// Bridges Apple's DeviceActivityReport SwiftUI view to React Native via ExpoView + UIHostingController.
 /// Supports filtering by users (.all, .children) and date intervals.
-@available(iOS 16.0, *)
+@available(iOS 15.0, *)
 class DeviceActivityReportBridgeView: ExpoView {
   private var hostingController: UIHostingController<AnyView>?
   private var needsRebuild = true
@@ -57,6 +57,11 @@ class DeviceActivityReportBridgeView: ExpoView {
       hc.view.removeFromSuperview()
       hc.removeFromParent()
       hostingController = nil
+    }
+
+    guard #available(iOS 16.0, *) else {
+      reportBridgeLogger.warning("DeviceActivityReport requires iOS 16+")
+      return
     }
 
     let context = DeviceActivityReport.Context(rawValue: reportContext)
